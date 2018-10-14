@@ -17,7 +17,7 @@
           <a class="navbar-item">Documentation</a>
           <div class="navbar-item">
             <div class="buttons">
-              <nuxt-link :to="{ path: '/account' }" class="button is-primary"><strong>Sign up</strong></nuxt-link>
+              <a :href="authUrl" class="button is-primary"><strong>Sign up</strong></a>
               <nuxt-link :to="{ path: '/account' }" class="button is-light">Log in</nuxt-link>
             </div>
           </div>
@@ -29,11 +29,34 @@
 </template>
 
 <script>
+const GOOGLE_OATH_URL = 'https://accounts.google.com/o/oauth2/v2/auth'
+// const GOOGLE_TOKEN_URL = 'https://www.googleapis.com/oauth2/v4/token'
+const SCOPES = [
+  'https://www.googleapis.com/auth/userinfo.profile',
+  'https://www.googleapis.com/auth/userinfo.email',
+  'https://www.googleapis.com/auth/spreadsheets'
+]
+const CLIENT_ID = process.env.CLIENT_ID
+const REDIRECT_URL = process.env.OAUTH_REDIRECT_URL
+const STATE = 'state_parameter_passthrough_value'
 
 export default {
   data () {
     return {
       isMenuActive: false
+    }
+  },
+  computed: {
+    authUrl () {
+      let scope = encodeURIComponent(SCOPES.join(' '))
+      let redirect = encodeURIComponent(REDIRECT_URL)
+      return `${GOOGLE_OATH_URL}?scope=${scope}` +
+        `&access_type=offline` +
+        `&include_granted_scopes=true` +
+        `&state=${STATE}` +
+        `&redirect_uri=${redirect}` +
+        `&response_type=code` +
+        `&client_id=${CLIENT_ID}`
     }
   },
   methods: {

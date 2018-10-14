@@ -14,10 +14,17 @@ module.exports = {
     ]
   },
   /*
+  ** Modules
+  */
+  modules: [
+    '@nuxtjs/dotenv',
+    '@nuxtjs/toast'
+  ],
+  /*
   ** Global CSS
   */
   css: [
-    { src: '@/assets/css/main.scss', lang: 'scss' },
+    { src: '@/assets/css/main.scss', lang: 'scss' }
   ],
   /*
   ** Add axios globally
