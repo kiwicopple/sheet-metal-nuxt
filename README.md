@@ -1,18 +1,11 @@
-# sheet_metal
+# Sheet Metal
 
-> Turn your Google Sheets into an API
+Turn your Google Sheets into a Restful API.
 
-## Build Setup
+## Getting Started
 
-``` bash
-# install dependencies
-$ npm install # Or yarn install
-
-# serve with hot reload at localhost:3000
-$ npm run dev
-
-# build for production and launch server
-$ npm start
+```bash
+npm install # install dependencie
+npm run dev # serve with hot reload at localhost:3000
+npm start # build for production and launch server
 ```
-
-For detailed explanation on how things work, checkout the [Nuxt.js docs](https://github.com/nuxt/nuxt.js).
