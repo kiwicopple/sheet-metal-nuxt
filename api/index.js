@@ -17,10 +17,12 @@ app.use(bodyParser.json())
 
 // Require API routes
 const auth = require('./routes/auth')
+const google = require('./routes/g')
 const users = require('./routes/users')
 
 // Import API Routes
 app.use(auth)
+app.use(google)
 app.use(users)
 
 // Export the server middleware

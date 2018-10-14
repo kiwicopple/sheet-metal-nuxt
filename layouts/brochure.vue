@@ -16,9 +16,12 @@
           <a class="navbar-item">Pricing</a>
           <a class="navbar-item">Documentation</a>
           <div class="navbar-item">
-            <div class="buttons">
+            <div class="buttons" v-if="!isLoggedIn">
               <a :href="authUrl" class="button is-primary"><strong>Sign up</strong></a>
-              <a :href="authUrl" class="button is-light">Log in</a>
+              <a :href="authUrl" class="button">Log in</a>
+            </div>
+            <div class="buttons" v-if="isLoggedIn">
+              <nuxt-link :to="{ path: '/account' }" class="button">Account</nuxt-link>
             </div>
           </div>
         </div>
@@ -29,12 +32,14 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 const GOOGLE_OATH_URL = 'https://accounts.google.com/o/oauth2/v2/auth'
 const SCOPES = [
   'https://www.googleapis.com/auth/userinfo.profile', // this comes anyway
   'https://www.googleapis.com/auth/userinfo.email', // not strictly required, but I want to give users an ability to receive updates via email
   'https://www.googleapis.com/auth/spreadsheets', // CRUD
-  'https://www.googleapis.com/auth/drive' // Get a list of sheets (allow the user to "favourite" some). Not required for the API
+  'https://www.googleapis.com/auth/drive' // Get a list of sheets (allow the user to "favourite" some), and in the future subscribe to updates
 ]
 const CLIENT_ID = process.env.CLIENT_ID
 const REDIRECT_URL = process.env.OAUTH_REDIRECT_URL
@@ -47,6 +52,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      isLoggedIn: 'isLoggedIn'
+    }),
     authUrl () {
       let scope = encodeURIComponent(SCOPES.join(' '))
       let redirect = encodeURIComponent(REDIRECT_URL)

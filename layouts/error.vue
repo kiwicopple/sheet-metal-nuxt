@@ -14,6 +14,7 @@
 </template>
 <script>
 export default {
+  auth: false,
   props: ['error']
 }
 </script>

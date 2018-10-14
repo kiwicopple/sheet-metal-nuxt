@@ -10,16 +10,10 @@
 
 <script>
 export default {
+  layout: 'brochure',
+  auth: false,
   async asyncData () {
     return {
-    }
-  },
-
-  // Display config
-  layout: 'brochure',
-  head () {
-    return {
-      title: 'Users'
     }
   }
 }

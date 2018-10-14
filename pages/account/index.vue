@@ -21,10 +21,10 @@
         </div>
         <div class="column is-8" v-if="seletedTab === 'Account'">
           <div class="box">
-            Account
+            Name: {{user.name}}
           </div>
           <div class="buttons is-right">
-            <a class="button">Log out</a>
+            <a class="button" @click="logout()">Log out</a>
           </div>
         </div>
       </div>
@@ -36,12 +36,22 @@
 const TABS = [ 'Sheets', 'Account' ]
 
 export default {
-  async asyncData () {
+  asyncData: async function ({ app }) {
+    let files = app.$axios.get(`/api/g/sheets`)
+    let { data: authUser } = await app.$axios.get('/api/auth/user')
+    console.log('files', files)
     return {
       seletedTab: TABS[0],
+      user: authUser,
 
       // expose constants
       TABS: TABS
+    }
+  },
+  methods: {
+    logout () {
+      this.$cookies.set('token', false)
+      this.$router.push({ path: '/' })
     }
   },
 

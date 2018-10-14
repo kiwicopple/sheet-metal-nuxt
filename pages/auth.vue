@@ -15,8 +15,10 @@
 const GOOGLE_TOKEN_URL = `https://www.googleapis.com/oauth2/v4/token`
 const GOOGLE_USER_URL = `https://www.googleapis.com/oauth2/v1/userinfo?alt=json`
 const LOGIN_URL = '/api/auth/login'
+
 export default {
-  asyncData: async function ({ app, params, query }) {
+  auth: false,
+  asyncData: async function ({ app, params, query, store }) {
     try {
       let { error, code } = query
       if (error) throw new Error(error) // no token :( the user probably didn't authorise, or the app isn't set up correctly on Google console
@@ -31,7 +33,11 @@ export default {
         let { data: token } = await app.$axios.post(GOOGLE_TOKEN_URL, payload) // request the refresh token
         let { data: user } = await app.$axios.get(GOOGLE_USER_URL, { headers: { Authorization: `Bearer ${token.access_token}` } }) // also get the user info
         let { data: jwt } = await app.$axios.post(LOGIN_URL, { token: token, user: user }) // save the user and get a JWT
-        app.$axios.setToken(jwt.accessToken, 'Bearer') // All requests now should also include the JWT token
+        app.$cookies.set('token', JSON.stringify(jwt.accessToken), {
+          path: '/',
+          maxAge: 60 * 60 * 24 * 7 * 52
+        })
+        store.commit('setLoggedIn', true)
         return {
           authError: null,
           token: token,
