@@ -5,6 +5,7 @@
   "author": "@kiwicopple",
   "private": true,
   "scripts": {
+    "db:init": "node ./data/init.js",
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt build && nuxt start",
@@ -25,6 +26,7 @@
     "express-jwt": "^5.3.1",
     "googleapis": "^34.0.0",
     "jsonwebtoken": "^8.3.0",
+    "lowdb": "^1.0.0",
     "nuxt": "latest",
     "source-map-support": "^0.4.15"
   },

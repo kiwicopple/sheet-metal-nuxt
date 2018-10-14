@@ -9,5 +9,6 @@ const db = low(adapter)
 // Set some defaults
 db.defaults({
   users: [],
-  tokens: []
+  tokens: [],
+  sheets: []
 }).write()

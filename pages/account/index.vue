@@ -13,39 +13,80 @@
     </div>
   </div>
 
+  <div class="container m-t-lg" v-if="!error">
 
-    <div class="container m-t-lg">
-      <div class="columns is-centered ">
-        <div class="column is-8 box" v-if="seletedTab === 'Sheets'">
-          Sheet list
-        </div>
-        <div class="column is-8" v-if="seletedTab === 'Account'">
-          <div class="box">
-            Name: {{user.name}}
-          </div>
-          <div class="buttons is-right">
-            <a class="button" @click="logout()">Log out</a>
+    <div class="columns is-centered  is-multiline" v-if="seletedTab === 'Sheets'">
+      <div class="box column is-8">
+        <div class="field has-addons">
+          <div class="control is-expanded">
+            <input class="input is-fullwidth" type="text" v-model="filter" placeholder="Enter a spreadsheet ID">
           </div>
         </div>
       </div>
+      <div v-for="sheet in filteredSheets" :key="sheet.id" class="column is-8" >
+        <div class="box">
+          {{sheet.id}}
+        </div>
+      </div>
+
+      <div v-if="filter.length > 0 && !filteredSheets.length" class="column is-8 box">
+        <div>
+          {{filter}}
+        </div>
+        <div class="buttons is-right">
+          <a class="button">Add</a>
+        </div>
+      </div>
+
     </div>
+
+    <div class="columns is-centered"  v-if="seletedTab === 'Account'">
+      <div class="column is-8">
+        <div class="box">
+          Name: {{user.name}}
+        </div>
+        <div class="buttons is-right">
+          <a class="button" @click="logout()">Log out</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 </template>
 
 <script>
+
 const TABS = [ 'Sheets', 'Account' ]
 
 export default {
   asyncData: async function ({ app }) {
-    let files = app.$axios.get(`/api/g/sheets`)
-    let { data: authUser } = await app.$axios.get('/api/auth/user')
-    console.log('files', files)
-    return {
-      seletedTab: TABS[0],
-      user: authUser,
+    try {
+      let { data: authUser } = await app.$axios.get('/api/auth/user')
+      let { data: sheets } = await app.$axios.get('/api/auth/sheets')
+      console.log('sheets', sheets)
+      return {
+        error: null,
+        filter: '',
+        sheets: sheets || [],
+        seletedTab: TABS[0],
+        user: (authUser) ? authUser.profile : {},
 
-      // expose constants
-      TABS: TABS
+        // expose constants
+        TABS: TABS
+      }
+    } catch (error) {
+      console.log('error', error)
+      return {
+        error: error
+      }
+    }
+  },
+  computed: {
+    filteredSheets () {
+      if (this.filter && this.filter.length) return this.sheets.filter(x => (x.id.indexOf(this.filter) >= 0))
+      else return this.sheets
     }
   },
   methods: {
