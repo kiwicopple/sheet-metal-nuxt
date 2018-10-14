@@ -17,6 +17,7 @@ module.exports = {
   ** Modules
   */
   modules: [
+    '@nuxtjs/axios',
     '@nuxtjs/dotenv',
     '@nuxtjs/toast'
   ],

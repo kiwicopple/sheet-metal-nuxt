@@ -1,41 +1,52 @@
 <template>
 <div class="Home">
-  <section class="hero is-primary is-bold is-large">
-    <div class="hero-body">
-      <h1 class="title is-1">Sheet Metal</h1>
-
-      <p>Token: {{token}}</p>
-    </div>
+  <section class="section is-large has-text-centered" v-if="authError || !user">
+    <h1 class="title is-1">Oops</h1>
+    <p>{{authError}}</p>
+  </section>
+  <section class="section is-large has-text-centered" v-if="user && user.name">
+    <h3 class="title is-3">Welcome {{user.name}}</h3>
+    <a class="button is-dark is-large is-outlined is-rounded" href="/account">Continue to Dashboard</a>
   </section>
 </div>
 </template>
 
 <script>
-const axios = require('axios')
 const GOOGLE_TOKEN_URL = `https://www.googleapis.com/oauth2/v4/token`
+const GOOGLE_USER_URL = `https://www.googleapis.com/oauth2/v1/userinfo?alt=json`
+const LOGIN_URL = '/api/auth/login'
 export default {
-  async asyncData ({ app, params, query, store }) {
-    let { error, code } = query
-    if (error) {
-      console.log('error', error)
-    } else {
-      console.log('code', code)
-      let payload = {
-        code: code,
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        redirect_uri: process.env.OAUTH_REDIRECT_URL,
-        grant_type: 'authorization_code'
+  asyncData: async function ({ app, params, query }) {
+    try {
+      let { error, code } = query
+      if (error) throw new Error(error) // no token :( the user probably didn't authorise, or the app isn't set up correctly on Google console
+      else { // Google returned a short-lived token
+        let payload = { // We can use that token to get a "refresh" token
+          code: code,
+          client_id: process.env.CLIENT_ID,
+          client_secret: process.env.CLIENT_SECRET,
+          redirect_uri: process.env.OAUTH_REDIRECT_URL,
+          grant_type: 'authorization_code'
+        }
+        let { data: token } = await app.$axios.post(GOOGLE_TOKEN_URL, payload) // request the refresh token
+        let { data: user } = await app.$axios.get(GOOGLE_USER_URL, { headers: { Authorization: `Bearer ${token.access_token}` } }) // also get the user info
+        let { data: jwt } = await app.$axios.post(LOGIN_URL, { token: token, user: user }) // save the user and get a JWT
+        console.log('jwt', jwt)
+        app.$axios.setToken(jwt.accessToken, 'Bearer') // All requests now should also include the JWT token
+        // let { data: secretUser } = await app.$axios.get('/api/auth/user', { headers: { Authorization: `Bearer ${jwt.accessToken}` } })
+        let { data: secretUser } = await app.$axios.get('/api/auth/user')
+        console.log('user', secretUser)
+        return {
+          authError: null,
+          token: token,
+          user: user
+        }
       }
-      console.log('payload', payload)
-      let { data: token } = await axios.post(GOOGLE_TOKEN_URL, payload).catch(e => {
-        console.error('e', e.response.data)
-      })
-      console.log('token', token)
-      // db.get('users').push(token).write()
-      // res.redirect('/')
+    } catch (error) {
+      console.error('e', error)
       return {
-        token: token
+        authError: 'There was a problem signing in.',
+        user: null
       }
     }
   },
