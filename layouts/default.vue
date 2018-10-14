@@ -11,7 +11,7 @@
       </div>
 
       <div class="navbar-menu" :class="{ 'is-active': isMenuActive }">
-        <div class="navbar-start">
+        <!-- <div class="navbar-start">
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
               Sheets
@@ -26,13 +26,10 @@
               </nuxt-link>
             </div>
           </div>
-          <a class="navbar-item">
-            Tabs in current sheet
-          </a>
-        </div>
+        </div> -->
         <div class="navbar-end">
           <a class="navbar-item">Documentation</a>
-          <nuxt-link type="a" :to="{ path: '/account' }" class="navbar-item">Settings</nuxt-link>
+          <nuxt-link type="a" :to="{ path: '/account' }" class="navbar-item">Account</nuxt-link>
         </div>
       </div>
     </nav>

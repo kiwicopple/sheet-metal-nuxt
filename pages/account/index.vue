@@ -1,5 +1,5 @@
 <template>
-<div class="Account">
+<div class="Account" v-if="!error">
   <div class="top">
 
     <div class="tabs is-centered">
@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  <div class="container m-t-lg" v-if="!error">
+  <div class="container m-t-lg">
 
     <div class="columns is-centered  is-multiline" v-if="seletedTab === 'Sheets'">
       <div class="box column is-8">
@@ -61,6 +61,11 @@ export default {
   asyncData: async function ({ app }) {
     try {
       let { data: authUser } = await app.$axios.get('/api/auth/user')
+      let { data: sheet } = await app.$axios.get('/api/v1/sheets/1d5GMrITfiuHBkqZQmmfoT_K8j8i0zL-0hDz2WOgpIFE')
+      let { data: values } = await app.$axios.get('/api/v1/sheets/1d5GMrITfiuHBkqZQmmfoT_K8j8i0zL-0hDz2WOgpIFE/Payslips!A1:AA1000')
+      console.log('sheet', sheet)
+      console.log('values', values)
+      // console.log('authUser', authUser)
       return {
         error: null,
         filter: '',
