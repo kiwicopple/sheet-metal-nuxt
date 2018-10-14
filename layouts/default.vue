@@ -32,7 +32,7 @@
         </div>
         <div class="navbar-end">
           <a class="navbar-item">Documentation</a>
-          <a class="navbar-item">Settings</a>
+          <nuxt-link type="a" :to="{ path: '/account' }" class="navbar-item">Settings</nuxt-link>
         </div>
       </div>
     </nav>

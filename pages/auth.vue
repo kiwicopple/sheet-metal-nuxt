@@ -31,11 +31,7 @@ export default {
         let { data: token } = await app.$axios.post(GOOGLE_TOKEN_URL, payload) // request the refresh token
         let { data: user } = await app.$axios.get(GOOGLE_USER_URL, { headers: { Authorization: `Bearer ${token.access_token}` } }) // also get the user info
         let { data: jwt } = await app.$axios.post(LOGIN_URL, { token: token, user: user }) // save the user and get a JWT
-        console.log('jwt', jwt)
         app.$axios.setToken(jwt.accessToken, 'Bearer') // All requests now should also include the JWT token
-        // let { data: secretUser } = await app.$axios.get('/api/auth/user', { headers: { Authorization: `Bearer ${jwt.accessToken}` } })
-        let { data: secretUser } = await app.$axios.get('/api/auth/user')
-        console.log('user', secretUser)
         return {
           authError: null,
           token: token,
