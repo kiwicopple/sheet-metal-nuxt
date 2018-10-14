@@ -17,13 +17,13 @@
               Sheets
             </a>
             <div class="navbar-dropdown">
-              <a class="navbar-item">
-                Sheet list
-              </a>
+              <nuxt-link tag="a" :to="{ path: '/' }" class="navbar-item" v-for="sheet in sheets" :key="sheet.id">
+                {{sheet.id}}
+              </nuxt-link>
               <hr class="navbar-divider">
-              <a class="navbar-item">
+              <nuxt-link tag="a" :to="{ path: '/account' }" class="navbar-item" v-for="sheet in sheets" :key="sheet.id">
                 Link new sheet
-              </a>
+              </nuxt-link>
             </div>
           </div>
           <a class="navbar-item">
@@ -41,12 +41,17 @@
 </template>
 
 <script>
-
+import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
       isMenuActive: false
     }
+  },
+  computed: {
+    ...mapGetters({
+      sheets: 'sheets'
+    })
   },
   methods: {
     toggleMenu () {

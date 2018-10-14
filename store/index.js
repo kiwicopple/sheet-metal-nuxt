@@ -5,8 +5,10 @@ export const state = () => ({
 
 export const mutations = {
   setLoggedIn (state, payload) {
-    console.log('setLoggedIn', payload)
     state.isLoggedIn = payload
+  },
+  setSheetList (state, sheets) {
+    state.sheets = sheets
   }
 }
 

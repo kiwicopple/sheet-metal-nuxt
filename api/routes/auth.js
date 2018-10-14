@@ -29,8 +29,9 @@ router.get('/auth/sheets', function (req, res) {
 
 /* GET all the files that this user has saved in the past. */
 router.post('/auth/sheets/add', function (req, res) {
+  let user = { req }
   const payload = req.body
-  let sheetId = saveSheet(payload)
+  let sheetId = saveSheet(payload, user.id)
   return res.json(sheetId)
 })
 
@@ -50,7 +51,7 @@ const getSheet = (id) => { // eslint-disable-line
 }
 const getSheets = (userId) => { // eslint-disable-line
   let sheets = db.get('sheets').value()
-  return sheets.find(x => (x.user_id === userId)) || []
+  return sheets.filter(x => (x.user_id === userId)) || []
 }
 const getToken = (id) => { // eslint-disable-line
   let tokens = db.get('tokens').value()
@@ -65,7 +66,7 @@ const getUser = (id) => { // eslint-disable-line
   return users.find(x => (x.id === id)) || null
 }
 const saveSheet = (sheet, userId) => { // eslint-disable-line
-  return db.get('sheet').push({ ...sheet, user_id: userId }).write().id
+  return db.get('sheets').push({ ...sheet, user_id: userId }).write().id
 }
 const saveToken = (token, userId) => { // eslint-disable-line
   return db.get('tokens').push({ ...token, user_id: userId }).write().id

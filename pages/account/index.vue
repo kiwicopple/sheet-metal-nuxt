@@ -23,10 +23,8 @@
           </div>
         </div>
       </div>
-      <div v-for="sheet in filteredSheets" :key="sheet.id" class="column is-8" >
-        <div class="box">
-          {{sheet.id}}
-        </div>
+      <div v-for="sheet in filteredSheets" :key="sheet.id" class="box column is-8" >
+        {{sheet.id}}
       </div>
 
       <div v-if="filter.length > 0 && !filteredSheets.length" class="column is-8 box">
@@ -34,7 +32,7 @@
           {{filter}}
         </div>
         <div class="buttons is-right">
-          <a class="button">Add</a>
+          <a class="button" @click="addSheet(filter)">Add</a>
         </div>
       </div>
 
@@ -57,19 +55,15 @@
 </template>
 
 <script>
-
+import { mapGetters } from 'vuex'
 const TABS = [ 'Sheets', 'Account' ]
-
 export default {
   asyncData: async function ({ app }) {
     try {
       let { data: authUser } = await app.$axios.get('/api/auth/user')
-      let { data: sheets } = await app.$axios.get('/api/auth/sheets')
-      console.log('sheets', sheets)
       return {
         error: null,
         filter: '',
-        sheets: sheets || [],
         seletedTab: TABS[0],
         user: (authUser) ? authUser.profile : {},
 
@@ -84,12 +78,28 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      sheets: 'sheets'
+    }),
     filteredSheets () {
       if (this.filter && this.filter.length) return this.sheets.filter(x => (x.id.indexOf(this.filter) >= 0))
       else return this.sheets
     }
   },
   methods: {
+    addSheet: async function (sheetId) {
+      try {
+        const token = this.$cookies.get('token')
+        this.$axios.setToken(token, 'Bearer')
+        let payload = {
+          id: sheetId
+        }
+        let { data: sheet } = await this.$axios.post('/api/auth/sheets/add', payload)
+        console.log('sheet', sheet)
+      } catch (error) {
+        console.log('error', error)
+      }
+    },
     logout () {
       this.$cookies.set('token', false)
       this.$router.push({ path: '/' })
