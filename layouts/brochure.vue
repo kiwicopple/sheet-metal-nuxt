@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="BrochureLayout">
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <nuxt-link :to="{ path: '/' }" class="navbar-item"><strong>Sheet Metal</strong></nuxt-link>
@@ -11,28 +11,16 @@
       </div>
 
       <div class="navbar-menu" :class="{ 'is-active': isMenuActive }">
-        <div class="navbar-start">
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
-              Sheets
-            </a>
-            <div class="navbar-dropdown">
-              <a class="navbar-item">
-                Sheet list
-              </a>
-              <hr class="navbar-divider">
-              <a class="navbar-item">
-                Link new sheet
-              </a>
+
+        <div class="navbar-end">
+          <a class="navbar-item">Pricing</a>
+          <a class="navbar-item">Documentation</a>
+          <div class="navbar-item">
+            <div class="buttons">
+              <nuxt-link :to="{ path: '/account' }" class="button is-primary"><strong>Sign up</strong></nuxt-link>
+              <nuxt-link :to="{ path: '/account' }" class="button is-light">Log in</nuxt-link>
             </div>
           </div>
-          <a class="navbar-item">
-            Tabs in current sheet
-          </a>
-        </div>
-        <div class="navbar-end">
-          <a class="navbar-item">Documentation</a>
-          <a class="navbar-item">Settings</a>
         </div>
       </div>
     </nav>
