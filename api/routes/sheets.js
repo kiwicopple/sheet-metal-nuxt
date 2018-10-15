@@ -6,8 +6,9 @@ const router = Router()
 /* GET a sheet. */
 router.get('/v1/sheets/:id', async function (req, res) {
   const { id } = req.params
-  const auth = _getAuthFromHeaders(req.headers, req.query)
+  const auth = await _getAuthFromHeaders(req.headers, req.query)
   if (!auth) return res.status(401).send('Missing metal-token')
+  console.log('auth', auth)
   const sheets = _authorisedClient(auth)
   sheets.spreadsheets.get({
     spreadsheetId: id
@@ -23,14 +24,15 @@ router.get('/v1/sheets/:id', async function (req, res) {
 router.get('/v1/sheets/:id/:range', async function (req, res) {
   const { id, range } = req.params
   const { format } = req.query
-  const auth = _getAuthFromHeaders(req.headers, req.query)
+  const auth = await _getAuthFromHeaders(req.headers, req.query)
+  console.log('auth', auth)
   if (!auth) return res.status(401).send('Missing metal-token')
   const sheets = _authorisedClient(auth)
   sheets.spreadsheets.values.get({ 
     spreadsheetId: id, range: range, 
   }, (err, response) => {
     if (err) return _handleError(err, req, res)
-    else if (format.toUpperCase() === 'RAW') return res.send(response.data)
+    else if (format && format.toUpperCase() === 'RAW') return res.send(response.data)
     else {
       let data = response.data
       let formatted = _valuesToJson(data.values)
@@ -56,19 +58,25 @@ const _handleError = (error, req, res) => {
   return res.status(500).send({ error: 'Error' })
 }
 
-const _getAuthFromHeaders = (headers, query) => {
-  const key = query ? query.key : null
-  const googleToken = headers['google-token'] ? JSON.parse(headers['google-token']) : null
-  const metalKey = headers['metal-key'] || null
-  if (googleToken) { // no need to look up the token, just use the one provided
-    console.log('googleToken', googleToken)
-    return googleToken 
-  } else if (metalKey || key) { // API is being called externally, they should be passing a 'metal-key'
-    let apiKey = metalKey || key
-    let user = Database.getUserForKey(apiKey)
-    return (user) ? user['user_data']['google_token'] : null
-  } else {
-    console.log('no auth')
+const _getAuthFromHeaders = async (headers, query) => {
+  try {
+    const key = query ? query.key : null
+    const googleToken = headers['google-token'] ? JSON.parse(headers['google-token']) : null
+    const metalKey = headers['metal-key'] || null
+    if (googleToken) { // no need to look up the token, just use the one provided
+      console.log('googleToken', googleToken)
+      return googleToken
+    } else if (metalKey || key) { // API is being called externally, they should be passing a 'metal-key'
+      let apiKey = metalKey || key
+      let user = await Database.getUserForKey(apiKey) || null
+      console.log('user', user['user_data']['google_token'])
+      return (user && user['user_data']) ? user['user_data']['google_token'] : null
+    } else {
+      console.log('no auth')
+      return null
+    }
+  } catch (error) {
+    console.log('error', error)
     return null
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "sheet_metal",
-  "version": "1.0.0",
-  "description": "Turn your Google Sheets into an API",
+  "version": "0.0.1",
+  "description": "Turn your Google Sheets into a APIs",
   "author": "@kiwicopple",
   "private": true,
   "scripts": {

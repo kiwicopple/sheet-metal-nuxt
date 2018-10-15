@@ -8,7 +8,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-const pg = require('../../db')
+const pg = require('./index')
 
 const uuidv4 = exports.uuidv4 = () => { // the database can handle this, but *shrug*
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -34,7 +34,7 @@ const getUser = exports.getUser = async (id) => { // eslint-disable-line
 }
 const getUserForKey = exports.getUserForKey = async (key) => { // eslint-disable-line
   try {
-    const { rows } = await pg.query('SELECT * FROM user_tokens WHERE key = $1', [key])
+    const { rows } = await pg.query('SELECT * FROM user_tokens WHERE token_key = $1', [key])
     return rows[0]
   } catch (error) {
     console.log('error', error)
