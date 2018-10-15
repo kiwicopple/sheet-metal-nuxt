@@ -8,11 +8,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
-const adapter = new FileSync(process.env.LOCAL_DATA_STORE)
-const db = low(adapter)
-
 const pg = require('../../db')
 
 const uuidv4 = exports.uuidv4 = () => { // the database can handle this, but *shrug*

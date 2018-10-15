@@ -13,6 +13,7 @@ dist
 # Backpack build
 build
 
-
-.env
-data/db.json
+.elasticbeanstalk
+.ebignore
+*.env
+!sample.env
