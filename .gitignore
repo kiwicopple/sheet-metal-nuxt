@@ -14,6 +14,5 @@ dist
 build
 
 .elasticbeanstalk
-.ebignore
 *.env
 !sample.env
