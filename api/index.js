@@ -8,11 +8,18 @@ const JWT_SECRET = process.env.JWT_SECRET
 
 const app = express()
 app.use( // JWT middleware
-  jwt({ secret: JWT_SECRET }).unless({
-    path: [
-      '/api/auth/login', 
-      '/api/v1/sheets'
-    ]
+  // jwt({ secret: JWT_SECRET }).unless({
+  //   path: [
+  //     // { url: '/api/auth/login' }, 
+  //     { url: /\/api\/\v1\/sheets\/*/ } // disable on the sheets URLs, which use the keys that the user provides
+  //   ]
+  // })
+  jwt({ secret: JWT_SECRET }).unless((req) => {
+    let { path } = req
+    console.log('path', path)
+    if (path === '/api/auth/login' || path === '/auth/login') return true
+    else if (path.indexOf('/v1/sheets/') === 0) return true
+    else return false
   })
 )
 app.use(cookieParser())

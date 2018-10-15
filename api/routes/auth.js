@@ -1,15 +1,16 @@
 const { Router } = require('express')
 const router = Router()
 const jsonwebtoken = require('jsonwebtoken')
+const Database = require('../lib/database')
 
 const JWT_SECRET = process.env.JWT_SECRET
 
 /* Create a JWT token for this user to manage their account. */
 router.post('/auth/login', function (req, res) {
   const { user, token } = req.body
-  const accessToken = jsonwebtoken.sign({ profile: user, googleAuth: token }, JWT_SECRET)
-  saveUser(user)
-  saveToken(token)
+  const dbUser = { ...user, google_token: token }
+  const accessToken = jsonwebtoken.sign(dbUser, JWT_SECRET)
+  Database.saveUser(dbUser)
   return res.json({
     accessToken
   })
@@ -22,55 +23,30 @@ router.get('/auth/user', function (req, res) {
 
 /* GET all the files that this user has saved in the past. */
 router.get('/auth/sheets', function (req, res) {
-  let user = { req }
-  let sheets = getSheets(user.id)
+  let sheets = Database.getSheets(req.user.id)
   return res.json(sheets)
 })
 
-/* GET all the files that this user has saved in the past. */
-router.post('/auth/sheets/add', function (req, res) {
-  let user = { req }
-  const payload = req.body
-  let sheetId = saveSheet(payload, user.id)
-  return res.json(sheetId)
+// Get all metal tokens for this user
+router.get('/auth/tokens/', function (req, res) {
+  let tokens = Database.getTokens(req.user.id)
+  return res.json(tokens)
+})
+
+// Save a Metal token
+router.post('/auth/tokens/', function (req, res) {
+  function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8)
+      return v.toString(16)
+    })
+  }
+  let payload = {
+    id: uuidv4(),
+    created: new Date()
+  }
+  let id = Database.saveToken(payload, req.user.id)
+  return res.json(id)
 })
 
 module.exports = router
-
-//
-// mocking out an API calls to Pollygot Core
-//
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
-const adapter = new FileSync(process.env.LOCAL_DATA_STORE)
-const db = low(adapter)
-
-const getSheet = (id) => { // eslint-disable-line
-  let sheets = db.get('sheets').value()
-  return sheets.find(x => (x.id === id)) || null
-}
-const getSheets = (userId) => { // eslint-disable-line
-  let sheets = db.get('sheets').value()
-  return sheets.filter(x => (x.user_id === userId)) || []
-}
-const getToken = (id) => { // eslint-disable-line
-  let tokens = db.get('tokens').value()
-  return tokens.find(x => (x.id === id)) || null
-}
-const getTokens = (userId) => { // eslint-disable-line
-  let sheets = db.get('tokens').value()
-  return sheets.find(x => (x.user_id === userId)) || null
-}
-const getUser = (id) => { // eslint-disable-line
-  let users = db.get('users').value()
-  return users.find(x => (x.id === id)) || null
-}
-const saveSheet = (sheet, userId) => { // eslint-disable-line
-  return db.get('sheets').push({ ...sheet, user_id: userId }).write().id
-}
-const saveToken = (token, userId) => { // eslint-disable-line
-  return db.get('tokens').push({ ...token, user_id: userId }).write().id
-}
-const saveUser = (user, userId) => { // eslint-disable-line
-  return db.get('users').push({ ...user, user_id: userId }).write().id
-}
