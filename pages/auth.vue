@@ -26,7 +26,7 @@ export default {
         let payload = { // We can use that token to get a "refresh" token
           code: code,
           client_id: process.env.CLIENT_ID,
-          client_secret: process.env.CLIENT_SECRET,
+          client_secret: process.env.CLIENT_SECRET, 
           redirect_uri: process.env.OAUTH_REDIRECT_URL,
           grant_type: 'authorization_code'
         }

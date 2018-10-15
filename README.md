@@ -29,3 +29,13 @@ Are welcomed.
 npm run migrate create table name
 
 ```
+
+## Deploy
+
+```bash
+# Building locally
+mv .env .env.dev && mv .env.prod .env
+npm run build && mv .env .env.prod && mv .env.dev .env
+
+
+```
