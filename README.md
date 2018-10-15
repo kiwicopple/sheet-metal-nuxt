@@ -32,10 +32,10 @@ npm run migrate create table name
 
 ## Deploy
 
+#### Building locally
+
 ```bash
-# Building locally
 mv .env .env.dev && mv .env.prod .env
 npm run build && mv .env .env.prod && mv .env.dev .env
-
-
+# Deploy build to server and run `npm start`
 ```
