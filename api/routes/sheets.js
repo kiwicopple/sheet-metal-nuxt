@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const { google } = require('googleapis')
-const Database = require('../lib/database')
+const Database = require('../../db/database')
 const router = Router()
 
 /* GET a sheet. */
@@ -66,7 +66,7 @@ const _getAuthFromHeaders = (headers, query) => {
   } else if (metalKey || key) { // API is being called externally, they should be passing a 'metal-key'
     let apiKey = metalKey || key
     let user = Database.getUserForKey(apiKey)
-    return (user) ? user['google_token'] : null
+    return (user) ? user['user_data']['google_token'] : null
   } else {
     console.log('no auth')
     return null

@@ -5,9 +5,9 @@
   "author": "@kiwicopple",
   "private": true,
   "scripts": {
-    "db:init": "node ./data/init.js",
     "dev": "nuxt",
     "build": "nuxt build",
+    "migrate": "node-pg-migrate",
     "start": "nuxt build && nuxt start",
     "precommit": "npm run lint",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
@@ -27,7 +27,9 @@
     "googleapis": "^34.0.0",
     "jsonwebtoken": "^8.3.0",
     "lowdb": "^1.0.0",
+    "node-pg-migrate": "^3.11.0",
     "nuxt": "latest",
+    "pg": "^7.5.0",
     "source-map-support": "^0.4.15"
   },
   "devDependencies": {

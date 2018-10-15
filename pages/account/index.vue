@@ -41,7 +41,7 @@
           <a class="button" @click="createToken()">Create token</a>
         </div>
       <div v-for="token in tokens" :key="token.id" class="box" >
-        <div class=""><strong>Key:</strong> {{token.id}}</div>
+        <div class=""><strong>Key:</strong> {{token.key}}</div>
         <div class="buttons is-right">
           <a class="button is-small">Delete</a>
           <a class="button is-small">Copy Key</a>
@@ -62,9 +62,8 @@ export default {
   asyncData: async function ({ app }) {
     try {
       let { data: authUser } = await app.$axios.get('/api/auth/user')
-      console.log('authUser', authUser)
       let { data: tokens } = await app.$axios.get('/api/auth/tokens')
-      let HEADERS = { headers: { 'google-token': JSON.stringify(authUser['google_token']) } }
+      // let HEADERS = { headers: { 'google-token': JSON.stringify(authUser['google_token']) } }
       // let { data: sheet } = await app.$axios.get('/api/v1/sheets/1d5GMrITfiuHBkqZQmmfoT_K8j8i0zL-0hDz2WOgpIFE', HEADERS)
       // let { data: values } = await app.$axios.get('/api/v1/sheets/1d5GMrITfiuHBkqZQmmfoT_K8j8i0zL-0hDz2WOgpIFE/Payslips!A1:B5', HEADERS)
       // console.log('sheet', sheet)
