@@ -15,5 +15,5 @@ build
 
 .elasticbeanstalk
 .ebignore
-*.env
+*.env*
 !sample.env
