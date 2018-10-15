@@ -35,14 +35,8 @@ router.get('/auth/tokens/', function (req, res) {
 
 // Save a Metal token
 router.post('/auth/tokens/', function (req, res) {
-  function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8)
-      return v.toString(16)
-    })
-  }
   let payload = {
-    id: uuidv4(),
+    id: Database.uuidv4(),
     created: new Date()
   }
   let id = Database.saveToken(payload, req.user.id)

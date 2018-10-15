@@ -64,6 +64,7 @@ export default {
         `&state=${STATE}` +
         `&redirect_uri=${redirect}` +
         `&response_type=code` +
+        `&prompt=consent` +
         `&client_id=${CLIENT_ID}`
     }
   },
