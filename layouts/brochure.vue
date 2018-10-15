@@ -13,7 +13,7 @@
       <div class="navbar-menu" :class="{ 'is-active': isMenuActive }">
 
         <div class="navbar-end">
-          <a class="navbar-item">Pricing</a>
+          <!-- <a class="navbar-item">Pricing</a> -->
           <a class="navbar-item">Documentation</a>
           <div class="navbar-item">
             <div class="buttons" v-if="!isLoggedIn">
