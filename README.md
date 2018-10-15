@@ -1,6 +1,6 @@
 # Sheet Metal
 
-Turn your Google Sheets into a Restful API.
+Turn your Google Sheets into Restful APIs.
 
 ## Getting Started
 
@@ -8,7 +8,8 @@ Set env vars in `.env`
 
 ```bash
 npm install # install dependencies
-npm run migrate up # run migrations
+mv .env_sample .env # add your own config
+npm run migrate up # run migrations (you'll need to create a Database first, and put the settings in .env)
 
 npm run dev # serve with hot reload at localhost:3000
 npm start # build for production and launch server
@@ -17,7 +18,11 @@ npm start # build for production and launch server
 
 ## Developers
 
-#### Database
+#### Contributions
+
+Are welcomed.
+
+#### Database helpers
 
 ```bash
 # Example: create a migration file
