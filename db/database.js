@@ -4,7 +4,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 const pg = require('./index')
-const Sentry = require('@sentry/node').init({ dsn: process.env.SENTRY_DSN })
+const Sentry = require('@sentry/node')
+Sentry.init({ dsn: process.env.SENTRY_DSN })
 
 /**
  * Return a UUID - good for tokens. The database already handles this too, but *shrug*
