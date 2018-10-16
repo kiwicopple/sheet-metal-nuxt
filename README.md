@@ -36,7 +36,7 @@ npm run migrate create table name
 
 ```bash
 mv .env .env.dev && mv .env.prod .env && \
-npm run migrate up && \ # run migration
+npm run migrate up && \
 mv .env .env.prod && mv .env.dev .env
 ```
 
