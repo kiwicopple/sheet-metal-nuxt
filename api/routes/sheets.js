@@ -8,9 +8,10 @@ const router = Router()
 router.get('/v1/sheets/:id', async function (req, res) {
   const { id } = req.params
   const auth = await _getAuthFromHeaders(req.headers, req.query)
-  if (!auth) return res.status(401).send('Missing metal-token')
   console.log('auth', auth)
+  if (!auth) return res.status(401).send('Missing metal-token')
   const sheets = _authorisedClient(auth)
+  console.log('Got authorised Sheets Client')
   sheets.spreadsheets.get({
     spreadsheetId: id
   }, (err, response) => {
@@ -28,6 +29,7 @@ router.get('/v1/sheets/:id/:range', async function (req, res) {
   console.log('auth', auth)
   if (!auth) return res.status(401).send('Missing metal-token')
   const sheets = _authorisedClient(auth)
+  console.log('Got authorised Sheets Client')
   sheets.spreadsheets.values.get({ 
     spreadsheetId: id, range: range, 
   }, (err, response) => {
