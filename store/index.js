@@ -2,6 +2,7 @@ import Vue from 'vue'
 
 const INITIAL_STATE = {
   isLoggedIn: false,
+  jwt: {},
   profile: {},
   tokens: []
 }
@@ -18,12 +19,21 @@ export const actions = {
       app.$axios.setToken(token, 'Bearer')
       let { data: authUser } = await app.$axios.get('/api/auth/user')
       let { data: tokens } = await app.$axios.get('/api/auth/tokens')
-      commit('setLoggedIn')
+      commit('setLoggedIn', token)
       commit('setProfile', authUser)
       commit('setTokenList', tokens)
 
     } 
-  }
+  },
+  async createToken({ commit, state }, payload) {
+    try {
+      this.$axios.setToken(state.jwt, 'Bearer')
+      let { data: token } = await this.$axios.post('/api/auth/tokens')
+      commit('addToken', token)
+    } catch (error) {
+      console.error('error', error)
+    }
+  },
 }
 
 /**
@@ -31,15 +41,13 @@ export const actions = {
  */
 export const mutations = {
   addToken (state, payload) {
-    
+    state.tokens.push(payload)
   },
   setLoggedIn(state, payload) {
     state.isLoggedIn = true
     if (payload) {
-      console.log('payload', payload)
-      state.profile = payload.profile
-      state.jwt = payload.jwt
-      this.$cookies.set('token', JSON.stringify(payload.jwt), {
+      state.jwt = payload
+      this.$cookies.set('token', JSON.stringify(payload), {
         path: '/',
         maxAge: 60 * 60 * 24 * 7 * 52
       })

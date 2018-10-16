@@ -35,7 +35,8 @@ export default {
         let mutatedToken = { ...token, expiry_date: ((new Date()).getTime() + (token.expires_in * 1000)) }
         delete mutatedToken.expires_in
         let { data: jwt } = await app.$axios.post(LOGIN_URL, { token: mutatedToken, user: user }) // save the user and get a JWT
-        store.commit('setLoggedIn', { profile: user, jwt: jwt })
+        store.commit('setLoggedIn', jwt)
+        store.commit('setProfile', user)
         return {
           authError: null,
           token: token,

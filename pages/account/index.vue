@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 const TABS = [ 'Sheets', 'Account' ]
 export default {
   asyncData: async function ({ app }) {
@@ -96,10 +96,13 @@ export default {
     }
   },
   methods: {
-    createToken: async function () {
-      let { data: token } = await this.$axios.post('/api/auth/tokens')
-      console.log('token', token)
-    },
+    ...mapActions({
+      createToken: 'createToken'
+    }),
+    // createToken: async function () {
+    //   let { data: token } = await this.$axios.post('/api/auth/tokens')
+    //   console.log('token', token)
+    // },
     logout () {
       this.$cookies.set('token', false)
       this.$router.push({ path: '/' })
