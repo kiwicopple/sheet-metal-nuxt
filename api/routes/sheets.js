@@ -2,17 +2,30 @@ const { Router } = require('express')
 const { google } = require('googleapis')
 const Database = require('../../db/database')
 const Sentry = require('@sentry/node')
+const GoogleHelpers = require('../lib/google')
 Sentry.init({ dsn: process.env.SENTRY_DSN })
 const router = Router()
 
-const TOKEN_ERROR = `Missing or invalid metal-token. Make sure the you have 'metal-key' in your headers or 'key' in your query params. Also make sure the key is correct!`
+const TOKEN_ERROR = `
+  Missing or invalid metal-token. 
+  Make sure the you have 'metal-key' in your headers or 'key' in your query params. Also make sure the key is correct!
+`
+const USER_PARAM_ERROR = `
+  Missing user param. 
+  Make sure you pass your user ID as a header or query param 'user'.
+`
 
 /* GET a sheet. */
 router.get('/v1/sheets/:id', async function (req, res) {
+  const userId = req.headers.user || req.query.user
+  if (!userId) return res.status(422).send(USER_PARAM_ERROR)
+  console.log('userId', userId)
+
   const { id } = req.params
-  const auth = await _getAuthFromHeaders(req.headers, req.query)
+  const auth = await _getAuthFromHeaders(req.headers, req.query, userId)
   console.log('auth', auth)
   if (!auth) return res.status(401).send(TOKEN_ERROR)
+
   const sheets = _authorisedClient(auth)
   sheets.spreadsheets.get({
     spreadsheetId: id
@@ -25,16 +38,21 @@ router.get('/v1/sheets/:id', async function (req, res) {
 
 /* GET a range of values. */
 router.get('/v1/sheets/:id/:range', async function (req, res) {
+  const userId = req.headers.user || req.query.user
+  if (!userId) return res.status(422).send(USER_PARAM_ERROR)
+  console.log('userId', userId)
+
   const { id, range } = req.params
   const { format } = req.query
-  const auth = await _getAuthFromHeaders(req.headers, req.query)
+  const auth = await _getAuthFromHeaders(req.headers, req.query, userId)
   console.log('auth', auth)
   if (!auth) return res.status(401).send(TOKEN_ERROR)
   const sheets = _authorisedClient(auth)
   sheets.spreadsheets.values.get({
     spreadsheetId: id, range: range,
   }, (err, response) => {
-    console.log('possibly new credentials', sheets['_options'].auth.credentials)
+    GoogleHelpers.handlePotentiallyNewOauth(auth, sheets, userId)
+    // console.log('possibly new credentials', sheets['_options'].auth.credentials)
     if (err) return _handleGoogleError(err, req, res)
     else if (format && format.toUpperCase() === 'RAW') return res.send(response.data)
     else {
@@ -68,7 +86,7 @@ const _handleGoogleError = (error, req, res) => {
   return res.status(500).send(err)
 }
 
-const _getAuthFromHeaders = async (headers, query) => {
+const _getAuthFromHeaders = async (headers, query, userId) => {
   try {
     const key = query ? query.key : null
     const googleToken = headers['google-token'] ? JSON.parse(headers['google-token']) : null
@@ -77,7 +95,7 @@ const _getAuthFromHeaders = async (headers, query) => {
       return googleToken
     } else if (metalKey || key) { // API is being called externally, they should be passing a 'metal-key'
       let apiKey = metalKey || key
-      let user = await Database.getUserForKey(apiKey) || null
+      let user = await Database.getUserForKey(apiKey, userId) || null
       return (user && user['oauth_token']) ? user['oauth_token'] : null
     } else {
       console.log('no auth')

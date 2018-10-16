@@ -46,9 +46,9 @@ const getUser = exports.getUser = async (id) => { // eslint-disable-line
 /**
  * Return a user for a given token/metal-key
  */
-const getUserForKey = exports.getUserForKey = async (key) => { // eslint-disable-line
+const getUserForKey = exports.getUserForKey = async (key, userId) => { // eslint-disable-line
   try {
-    const { rows } = await pg.query('SELECT * FROM user_tokens WHERE token_key = $1', [key])
+    const { rows } = await pg.query('SELECT * FROM user_tokens WHERE token_key = $1 AND user_id = $2', [key, userId])
     return rows[0]
   } catch (error) {
     console.log('error', error)
@@ -74,7 +74,7 @@ const saveToken = exports.saveToken = async (key, userId) => { // eslint-disable
 /**
  * Create a new user or update them if they already exist
  */
-const upsertUser = exports.upsertUser = async (user, oauthToken) => { // eslint-disable-line
+const upsertUser = exports.upsertUser = async (user, oauthToken) => { 
   console.log('user', user)
   console.log('oauthToken', oauthToken)
   try {
@@ -85,6 +85,21 @@ const upsertUser = exports.upsertUser = async (user, oauthToken) => { // eslint-
       RETURNING *;
     `
     const values = [user.id, user, oauthToken]
+    const res = await pg.query(text, values)
+    return res.rows[0]
+  } catch (error) {
+    console.log('error', error)
+    Sentry.captureException(error)
+  }
+}
+
+/**
+ * Update oath token for a given user
+ */
+const updateOathForUser = exports.updateOathForUser = async (userId, oauthToken) => { 
+  try {
+    const text = 'UPDATE users SET oauth_token = $1 WHERE id = $2 RETURNING *'
+    const values = [oauthToken, userId]
     const res = await pg.query(text, values)
     return res.rows[0]
   } catch (error) {

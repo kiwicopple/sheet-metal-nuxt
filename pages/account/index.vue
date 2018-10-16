@@ -30,7 +30,8 @@
       <div class="column is-8">
         <h3 class="title is-3">Profile</h3>
         <div class="box">
-          Name: {{profile.name}}
+          <p>Name: {{profile.name}}</p>
+          <p>Google ID: {{profile.id}}</p>
         </div>
         <div class="buttons is-right">
           <a class="button" @click="logout()">Log out</a>
