@@ -3,17 +3,20 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const jwt = require('express-jwt')
+const app = express()
+
+/**
+ * Sentry configuration for Express
+ */
+const Sentry = require('@sentry/node')
+Sentry.init({ dsn: process.env.SENTRY_DSN })
+app.use(Sentry.Handlers.requestHandler())
+app.use(Sentry.Handlers.errorHandler())
+
 
 const JWT_SECRET = process.env.JWT_SECRET
 
-const app = express()
 app.use( // JWT middleware
-  // jwt({ secret: JWT_SECRET }).unless({
-  //   path: [
-  //     // { url: '/api/auth/login' }, 
-  //     { url: /\/api\/\v1\/sheets\/*/ } // disable on the sheets URLs, which use the keys that the user provides
-  //   ]
-  // })
   jwt({ secret: JWT_SECRET }).unless((req) => {
     let { path } = req
     console.log('path', path)

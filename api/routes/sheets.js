@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const { google } = require('googleapis')
 const Database = require('../../db/database')
+const Sentry = require('@sentry/node').init({ dsn: process.env.SENTRY_DSN })
 const router = Router()
 
 /* GET a sheet. */
@@ -15,7 +16,6 @@ router.get('/v1/sheets/:id', async function (req, res) {
   }, (err, response) => {
     if (err) return _handleError(err, req, res)
     let data = response.data
-    // console.log('data', data)
     return res.send(data)
   })
 })
@@ -54,6 +54,7 @@ const _authorisedClient = (googleAuth) => {
 }
 
 const _handleError = (error, req, res) => {
+  Sentry.captureException(error)
   console.log('error', JSON.stringify(error, Object.getOwnPropertyNames(error)))
   return res.status(500).send({ error: 'Error' })
 }
@@ -76,6 +77,7 @@ const _getAuthFromHeaders = async (headers, query) => {
       return null
     }
   } catch (error) {
+    Sentry.captureException(error)
     console.log('error', error)
     return null
   }
