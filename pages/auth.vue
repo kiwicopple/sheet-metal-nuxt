@@ -26,13 +26,16 @@ export default {
         let payload = { // We can use that token to get a "refresh" token
           code: code,
           client_id: process.env.CLIENT_ID,
-          client_secret: process.env.CLIENT_SECRET, 
+          client_secret: process.env.CLIENT_SECRET,
           redirect_uri: process.env.OAUTH_REDIRECT_URL,
           grant_type: 'authorization_code'
         }
         let { data: token } = await app.$axios.post(GOOGLE_TOKEN_URL, payload) // request the refresh token
         let { data: user } = await app.$axios.get(GOOGLE_USER_URL, { headers: { Authorization: `Bearer ${token.access_token}` } }) // also get the user info
-        let { data: jwt } = await app.$axios.post(LOGIN_URL, { token: token, user: user }) // save the user and get a JWT
+        let { data: jwt } = await app.$axios.post(LOGIN_URL, { 
+          token: { ...token, expiry_date: ((new Date()).getTime() + (token.expires_in * 1000)) },
+          user: user
+        }) // save the user and get a JWT
         app.$cookies.set('token', JSON.stringify(jwt.accessToken), {
           path: '/',
           maxAge: 60 * 60 * 24 * 7 * 52

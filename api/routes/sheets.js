@@ -5,18 +5,19 @@ const Sentry = require('@sentry/node')
 Sentry.init({ dsn: process.env.SENTRY_DSN })
 const router = Router()
 
+const TOKEN_ERROR = `Missing or invalid metal-token. Make sure the you have 'metal-key' in your headers or 'key' in your query params. Also make sure the key is correct!`
+
 /* GET a sheet. */
 router.get('/v1/sheets/:id', async function (req, res) {
   const { id } = req.params
   const auth = await _getAuthFromHeaders(req.headers, req.query)
   console.log('auth', auth)
-  if (!auth) return res.status(401).send('Missing metal-token')
+  if (!auth) return res.status(401).send(TOKEN_ERROR)
   const sheets = _authorisedClient(auth)
-  console.log('Got authorised Sheets Client')
   sheets.spreadsheets.get({
     spreadsheetId: id
   }, (err, response) => {
-    if (err) return _handleError(err, req, res)
+    if (err) return _handleGoogleError(err, req, res)
     let data = response.data
     return res.send(data)
   })
@@ -28,13 +29,13 @@ router.get('/v1/sheets/:id/:range', async function (req, res) {
   const { format } = req.query
   const auth = await _getAuthFromHeaders(req.headers, req.query)
   console.log('auth', auth)
-  if (!auth) return res.status(401).send('Missing metal-token')
+  if (!auth) return res.status(401).send(TOKEN_ERROR)
   const sheets = _authorisedClient(auth)
-  console.log('Got authorised Sheets Client')
-  sheets.spreadsheets.values.get({ 
-    spreadsheetId: id, range: range, 
+  sheets.spreadsheets.values.get({
+    spreadsheetId: id, range: range,
   }, (err, response) => {
-    if (err) return _handleError(err, req, res)
+    console.log('possibly new credentials', sheets['_options'].auth.credentials)
+    if (err) return _handleGoogleError(err, req, res)
     else if (format && format.toUpperCase() === 'RAW') return res.send(response.data)
     else {
       let data = response.data
@@ -46,21 +47,25 @@ router.get('/v1/sheets/:id/:range', async function (req, res) {
 
 module.exports = router
 
-//
-// Helpers/private to be refactored
-//
+/**
+ * Helpers/private to be refactored
+ */
 
+// Probably the most annoying part of the whole google library is figuring out refreshed tokens
+// https://github.com/googleapis/google-api-nodejs-client/pull/235 and
+// https://github.com/googleapis/google-api-nodejs-client/issues/783
+// helped a lot
 const _authorisedClient = (googleAuth) => {
-  const oAuth2Client = new google.auth.OAuth2()
-  oAuth2Client.setCredentials(googleAuth)
-  return google.sheets({ version: 'v4', auth: oAuth2Client })
+  const oauth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.OAUTH_REDIRECT_URL)
+  oauth2Client.setCredentials({ ...googleAuth })
+  return google.sheets({ version: 'v4', auth: oauth2Client })
 }
 
-const _handleError = (error, req, res) => {
+const _handleGoogleError = (error, req, res) => {
   let err = error.response.data
   console.log('error', err)
   Sentry.captureException(err)
-  return res.status(500).send({ error: 'Error' + err })
+  return res.status(500).send(err)
 }
 
 const _getAuthFromHeaders = async (headers, query) => {
@@ -74,7 +79,6 @@ const _getAuthFromHeaders = async (headers, query) => {
     } else if (metalKey || key) { // API is being called externally, they should be passing a 'metal-key'
       let apiKey = metalKey || key
       let user = await Database.getUserForKey(apiKey) || null
-      console.log('user', user['user_data']['google_token'])
       return (user && user['user_data']) ? user['user_data']['google_token'] : null
     } else {
       console.log('no auth')
