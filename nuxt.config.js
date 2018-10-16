@@ -1,16 +1,19 @@
+require('dotenv').config({
+  path: (process.env.NODE_ENV === 'prod') ? '.env.prod' : '.env'
+})
 module.exports = {
   /*
   ** Headers of the page
   */
   head: {
-    title: 'starter',
+    title: 'Sheet Metal',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: 'Sheet Metal. Turn your Google Sheets into a Restful API.' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' }
     ]
   },
   /*
@@ -23,9 +26,12 @@ module.exports = {
   ** Modules
   */
   modules: [
-    // '@nuxtjs/auth',
-    '@nuxtjs/axios',
-    '@nuxtjs/dotenv',
+    ['@nuxtjs/dotenv', {
+      path: (process.env.NODE_ENV === 'prod') ? '.env.prod' : '.env'
+    }],
+    ['@nuxtjs/axios', {
+      baseURL: process.env.API_URL || 'http://localhost:3000',
+    }],
     '@nuxtjs/toast',
     'cookie-universal-nuxt'
   ],
@@ -42,19 +48,6 @@ module.exports = {
     // API middleware
     '~/api/index.js'
   ],
-  auth: {
-    redirect: {
-      login: '/auth',
-      callback: '/auth'
-    },
-    strategies: {
-      local: {
-        endpoints: {
-          login: { propertyName: 'token.accessToken' }
-        }
-      }
-    }
-  },
   /*
   ** Add axios globally
   */

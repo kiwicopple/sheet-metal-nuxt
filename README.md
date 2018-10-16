@@ -32,10 +32,17 @@ npm run migrate create table name
 
 ## Deploy
 
-#### Building locally
+#### Run migrations
 
 ```bash
-mv .env .env.dev && mv .env.prod .env
-npm run build && mv .env .env.prod && mv .env.dev .env
-# Deploy build to server and run `npm start`
+mv .env .env.dev && mv .env.prod .env && \ 
+npm run migrate up && \ # run migration
+mv .env .env.prod && mv .env.dev .env
+```
+
+#### Building locally and deploy (temp, until CI implemented)
+
+```bash
+npm run build # Build locally using .env.prod
+npm start # Run using .env.prod
 ```
