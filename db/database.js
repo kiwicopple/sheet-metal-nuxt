@@ -18,7 +18,7 @@ const uuidv4 = exports.uuidv4 = () => {
 }
 
 /**
- * Get tokens for a user
+ * Get tokens/metal-keys for a user
  */
 const getTokens = exports.getTokens = async (userId) => { // eslint-disable-line
   try {
@@ -57,7 +57,7 @@ const getUserForKey = exports.getUserForKey = async (key) => { // eslint-disable
 }
 
 /**
- * Save a new token/metal-key
+ * Save a new token/metal-key (this is different from the google oath token)
  */
 const saveToken = exports.saveToken = async (key, userId) => { // eslint-disable-line
   try {
@@ -72,12 +72,19 @@ const saveToken = exports.saveToken = async (key, userId) => { // eslint-disable
 }
 
 /**
- * Create a new user
+ * Create a new user or update them if they already exist
  */
-const saveUser = exports.saveUser = async (user) => { // eslint-disable-line
+const upsertUser = exports.upsertUser = async (user, oauthToken) => { // eslint-disable-line
+  console.log('user', user)
+  console.log('oauthToken', oauthToken)
   try {
-    const text = 'INSERT INTO users(id, data) VALUES($1, $2) RETURNING *'
-    const values = [user.id, user]
+    const text = `
+      INSERT INTO users(id, profile, oauth_token) values ($1, $2, $3)
+      ON CONFLICT (id)
+      DO UPDATE SET profile = $2, oauth_token = $3
+      RETURNING *;
+    `
+    const values = [user.id, user, oauthToken]
     const res = await pg.query(text, values)
     return res.rows[0]
   } catch (error) {

@@ -32,15 +32,10 @@ export default {
         }
         let { data: token } = await app.$axios.post(GOOGLE_TOKEN_URL, payload) // request the refresh token
         let { data: user } = await app.$axios.get(GOOGLE_USER_URL, { headers: { Authorization: `Bearer ${token.access_token}` } }) // also get the user info
-        let { data: jwt } = await app.$axios.post(LOGIN_URL, { 
-          token: { ...token, expiry_date: ((new Date()).getTime() + (token.expires_in * 1000)) },
-          user: user
-        }) // save the user and get a JWT
-        app.$cookies.set('token', JSON.stringify(jwt.accessToken), {
-          path: '/',
-          maxAge: 60 * 60 * 24 * 7 * 52
-        })
-        store.commit('setLoggedIn', true)
+        let mutatedToken = { ...token, expiry_date: ((new Date()).getTime() + (token.expires_in * 1000)) }
+        delete mutatedToken.expires_in
+        let { data: jwt } = await app.$axios.post(LOGIN_URL, { token: mutatedToken, user: user }) // save the user and get a JWT
+        store.commit('setLoggedIn', { profile: user, jwt: jwt })
         return {
           authError: null,
           token: token,

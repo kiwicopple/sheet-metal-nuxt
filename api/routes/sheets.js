@@ -74,12 +74,11 @@ const _getAuthFromHeaders = async (headers, query) => {
     const googleToken = headers['google-token'] ? JSON.parse(headers['google-token']) : null
     const metalKey = headers['metal-key'] || null
     if (googleToken) { // no need to look up the token, just use the one provided
-      console.log('googleToken', googleToken)
       return googleToken
     } else if (metalKey || key) { // API is being called externally, they should be passing a 'metal-key'
       let apiKey = metalKey || key
       let user = await Database.getUserForKey(apiKey) || null
-      return (user && user['user_data']) ? user['user_data']['google_token'] : null
+      return (user && user['oauth_token']) ? user['oauth_token'] : null
     } else {
       console.log('no auth')
       return null

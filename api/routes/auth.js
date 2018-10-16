@@ -8,16 +8,9 @@ const JWT_SECRET = process.env.JWT_SECRET
 /* Create a JWT token for this user to manage their account. */
 router.post('/auth/login', function (req, res) {
   const { user, token } = req.body
-  const authToken = {
-    ...token,
-    client_id: process.env.CLIENT_ID
-  }
-  const dbUser = { ...user, google_token: authToken }
-  const accessToken = jsonwebtoken.sign(dbUser, JWT_SECRET)
-  Database.saveUser(dbUser)
-  return res.json({
-    accessToken
-  })
+  const accessToken = jsonwebtoken.sign(user, JWT_SECRET)
+  Database.upsertUser(user, token)
+  return res.json(accessToken)
 })
 
 /* GET logged in user. */

@@ -30,7 +30,7 @@
       <div class="column is-8">
         <h3 class="title is-3">Profile</h3>
         <div class="box">
-          Name: {{user.name}}
+          Name: {{profile.name}}
         </div>
         <div class="buttons is-right">
           <a class="button" @click="logout()">Log out</a>
@@ -61,19 +61,12 @@ const TABS = [ 'Sheets', 'Account' ]
 export default {
   asyncData: async function ({ app }) {
     try {
-      let { data: authUser } = await app.$axios.get('/api/auth/user')
-      let { data: tokens } = await app.$axios.get('/api/auth/tokens')
-      // let HEADERS = { headers: { 'google-token': JSON.stringify(authUser['google_token']) } }
-      // let { data: sheet } = await app.$axios.get('/api/v1/sheets/1d5GMrITfiuHBkqZQmmfoT_K8j8i0zL-0hDz2WOgpIFE', HEADERS)
-      // let { data: values } = await app.$axios.get('/api/v1/sheets/1d5GMrITfiuHBkqZQmmfoT_K8j8i0zL-0hDz2WOgpIFE/Payslips!A1:B5', HEADERS)
-      // console.log('sheet', sheet)
-      // console.log('values', values)
-      console.log('tokens', tokens)
+      
       return {
         error: null,
         filter: '',
-        tokens: tokens || [],
-        user: (authUser) ? authUser : {},
+        // tokens: tokens || [],
+        // user: (authUser) ? authUser : {},
 
         // expose constants
         TABS: TABS
@@ -89,12 +82,13 @@ export default {
   // that I don't have to do this on every page. 
   // Probably populate the store wiht 'logged in user'
   mounted () { 
-    const token = this.$cookies.get('token')
-    this.$axios.setToken(token, 'Bearer') // All requests should also include the JWT token
+    // const token = this.$cookies.get('token')
+    // this.$axios.setToken(token, 'Bearer') // All requests should also include the JWT token
   },
   computed: {
     ...mapGetters({
-      sheets: 'sheets'
+      profile: 'profile',
+      tokens: 'tokens'
     }),
     filteredSheets () {
       if (this.filter && this.filter.length) return this.sheets.filter(x => (x.id.indexOf(this.filter) >= 0))
