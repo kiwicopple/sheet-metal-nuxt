@@ -3,6 +3,8 @@ import Vue from 'vue'
 const INITIAL_STATE = {
   isLoggedIn: false,
   jwt: {},
+  googleClientId: '',
+  oauthRedirectUrl: '',
   profile: {},
   tokens: []
 }
@@ -14,6 +16,8 @@ export const state = () => (INITIAL_STATE)
  */
 export const actions = {
   async nuxtServerInit({ commit }, { app, req, route }) {
+    commit('setGoogleClientId', process.env.CLIENT_ID)
+    commit('setOauthRedirectUrl', process.env.OAUTH_REDIRECT_URL)
     const token = app.$cookies.get('token')
     if (token) { // logged in
       app.$axios.setToken(token, 'Bearer')
@@ -22,7 +26,6 @@ export const actions = {
       commit('setLoggedIn', token)
       commit('setProfile', authUser)
       commit('setTokenList', tokens)
-
     } 
   },
   async createToken({ commit, state }, payload) {
@@ -43,6 +46,9 @@ export const mutations = {
   addToken (state, payload) {
     state.tokens.push(payload)
   },
+  setGoogleClientId (state, payload) {
+    state.googleClientId = payload
+  },
   setLoggedIn(state, payload) {
     state.isLoggedIn = true
     if (payload) {
@@ -58,6 +64,10 @@ export const mutations = {
       Vue.set(state, f, INITIAL_STATE[f])
     }
     this.$cookies.removeAll()
+    state.isLoggedIn = false
+  },
+  setOauthRedirectUrl(state, payload) {
+    state.oauthRedirectUrl = payload
   },
   setProfile (state, payload) {
     state.profile = payload
@@ -72,6 +82,8 @@ export const mutations = {
  */
 export const getters = {
   isLoggedIn: state => state.isLoggedIn,
+  googleClientId: state => state.googleClientId,
+  oauthRedirectUrl: state => state.oauthRedirectUrl,
   profile: state => state.profile,
   tokens: state => state.tokens
 }

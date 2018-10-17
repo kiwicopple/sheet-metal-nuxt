@@ -41,9 +41,6 @@ const SCOPES = [
   'https://www.googleapis.com/auth/spreadsheets', // CRUD
   'https://www.googleapis.com/auth/drive' // Get a list of sheets (allow the user to "favourite" some), and in the future subscribe to updates
 ]
-const CLIENT_ID = process.env.CLIENT_ID
-const REDIRECT_URL = process.env.OAUTH_REDIRECT_URL
-const STATE = 'state_parameter_passthrough_value'
 
 export default {
   data () {
@@ -53,19 +50,21 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isLoggedIn: 'isLoggedIn'
+      isLoggedIn: 'isLoggedIn',
+      googleClientId: 'googleClientId',
+      oauthRedirectUrl: 'oauthRedirectUrl'
     }),
     authUrl () {
       let scope = encodeURIComponent(SCOPES.join(' '))
-      let redirect = encodeURIComponent(REDIRECT_URL)
+      let redirect = encodeURIComponent(this.oauthRedirectUrl)
       return `${GOOGLE_OATH_URL}?scope=${scope}` +
         `&access_type=offline` +
         `&include_granted_scopes=true` +
-        `&state=${STATE}` +
+        `&state=state_parameter_passthrough_value` +
         `&redirect_uri=${redirect}` +
         `&response_type=code` +
         `&prompt=consent` +
-        `&client_id=${CLIENT_ID}`
+        `&client_id=${this.googleClientId}`
     }
   },
   methods: {

@@ -30,10 +30,12 @@
     "node-pg-migrate": "^3.11.0",
     "nuxt": "latest",
     "pg": "^7.5.0",
-    "source-map-support": "^0.4.15"
+    "source-map-support": "^0.4.15",
+    "winston": "^3.1.0"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
+    "concurrently": "^4.0.1",
     "eslint": "^4.3.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-loader": "^2.0.0",
@@ -44,6 +46,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "eslint-plugin-vue": "^4.7.1",
     "node-sass": "^4.9.3",
+    "nodemon": "^1.18.4",
     "nuxt-sass-resources-loader": "^2.0.5",
     "sass-loader": "^7.1.0",
     "vue-style-loader": "^4.1.2"
