@@ -2,7 +2,6 @@
 
 Turn your Google Sheets into Restful APIs.
 
-
 ## Developers
 
 #### Getting started
@@ -33,7 +32,6 @@ Are welcomed.
 ```bash
 # Example: create a migration file
 npm run migrate create table name
-
 ```
 
 ## Deploy
@@ -42,7 +40,7 @@ Create a `.env.prod`
 
 #### Run migrations
 
-```bash 
+```bash
 ## @TODO: fix - add prod vars
 mv .env .env.dev && mv .env.prod .env && \
 npm run migrate up && \
