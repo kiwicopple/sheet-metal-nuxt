@@ -13,11 +13,11 @@ Sentry.init({ dsn: process.env.SENTRY_DSN })
 app.use(Sentry.Handlers.requestHandler())
 app.use(Sentry.Handlers.errorHandler())
 
-
 const JWT_SECRET = process.env.JWT_SECRET
 
-app.use( // JWT middleware
-  jwt({ secret: JWT_SECRET }).unless((req) => {
+app.use(
+  // JWT middleware
+  jwt({ secret: JWT_SECRET }).unless(req => {
     let { path } = req
     console.log('path', path)
     if (path === '/api/auth/login' || path === '/auth/login') return true
@@ -40,5 +40,5 @@ app.use(sheets)
 // Export the server middleware
 module.exports = {
   path: '/api',
-  handler: app
+  handler: app,
 }

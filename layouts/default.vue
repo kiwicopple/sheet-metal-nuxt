@@ -39,21 +39,21 @@
 <script>
 import { mapGetters } from 'vuex'
 export default {
-  data () {
+  data() {
     return {
-      isMenuActive: false
+      isMenuActive: false,
     }
   },
   computed: {
     ...mapGetters({
-      sheets: 'sheets'
-    })
+      sheets: 'sheets',
+    }),
   },
   methods: {
-    toggleMenu () {
+    toggleMenu() {
       this.isMenuActive = !this.isMenuActive
-    }
-  }
+    },
+  },
 }
 </script>
 

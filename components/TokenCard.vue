@@ -39,23 +39,25 @@
 export default {
   name: 'TokenCard',
   props: {
-    tokenKey: { type: String, required: true }
+    tokenKey: { type: String, required: true },
   },
-  computed: {
-  },
+  computed: {},
   methods: {
-    copyKey () {
+    copyKey() {
       this.$refs.tokenKey.focus()
       this.$refs.tokenKey.select()
       try {
-        var successful = document.execCommand('copy');
+        var successful = document.execCommand('copy')
         if (successful) this.$toast.show('Copied!', { duration: 2000 })
-        else this.$toast.error('Oops, unable to copy', { duration: 2000 })
+        else
+          this.$toast.error('Oops, unable to copy', {
+            duration: 2000,
+          })
       } catch (err) {
         this.$toast.error('Oops, unable to copy', { duration: 2000 })
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

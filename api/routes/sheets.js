@@ -16,7 +16,7 @@ const USER_PARAM_ERROR = `
 `
 
 /* GET a sheet. */
-router.get('/v1/sheets/:id', async function (req, res) {
+router.get('/v1/sheets/:id', async function(req, res) {
   const userId = req.headers.user || req.query.user
   if (!userId) return res.status(422).send(USER_PARAM_ERROR)
   console.log('userId', userId)
@@ -27,17 +27,20 @@ router.get('/v1/sheets/:id', async function (req, res) {
   if (!auth) return res.status(401).send(TOKEN_ERROR)
 
   const sheets = _authorisedClient(auth)
-  sheets.spreadsheets.get({
-    spreadsheetId: id
-  }, (err, response) => {
-    if (err) return _handleGoogleError(err, req, res)
-    let data = response.data
-    return res.send(data)
-  })
+  sheets.spreadsheets.get(
+    {
+      spreadsheetId: id,
+    },
+    (err, response) => {
+      if (err) return _handleGoogleError(err, req, res)
+      let data = response.data
+      return res.send(data)
+    }
+  )
 })
 
 /* GET a range of values. */
-router.get('/v1/sheets/:id/:range', async function (req, res) {
+router.get('/v1/sheets/:id/:range', async function(req, res) {
   const userId = req.headers.user || req.query.user
   if (!userId) return res.status(422).send(USER_PARAM_ERROR)
   console.log('userId', userId)
@@ -48,19 +51,24 @@ router.get('/v1/sheets/:id/:range', async function (req, res) {
   console.log('auth', auth)
   if (!auth) return res.status(401).send(TOKEN_ERROR)
   const sheets = _authorisedClient(auth)
-  sheets.spreadsheets.values.get({
-    spreadsheetId: id, range: range,
-  }, (err, response) => {
-    GoogleHelpers.handlePotentiallyNewOauth(auth, sheets, userId)
-    // console.log('possibly new credentials', sheets['_options'].auth.credentials)
-    if (err) return _handleGoogleError(err, req, res)
-    else if (format && format.toUpperCase() === 'RAW') return res.send(response.data)
-    else {
-      let data = response.data
-      let formatted = _valuesToJson(data.values)
-      return res.send({ ...data, values: formatted })
+  sheets.spreadsheets.values.get(
+    {
+      spreadsheetId: id,
+      range: range,
+    },
+    (err, response) => {
+      GoogleHelpers.handlePotentiallyNewOauth(auth, sheets, userId)
+      // console.log('possibly new credentials', sheets['_options'].auth.credentials)
+      if (err) return _handleGoogleError(err, req, res)
+      else if (format && format.toUpperCase() === 'RAW')
+        return res.send(response.data)
+      else {
+        let data = response.data
+        let formatted = _valuesToJson(data.values)
+        return res.send({ ...data, values: formatted })
+      }
     }
-  })
+  )
 })
 
 module.exports = router
@@ -73,8 +81,12 @@ module.exports = router
 // https://github.com/googleapis/google-api-nodejs-client/pull/235 and
 // https://github.com/googleapis/google-api-nodejs-client/issues/783
 // helped a lot
-const _authorisedClient = (googleAuth) => {
-  const oauth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.OAUTH_REDIRECT_URL)
+const _authorisedClient = googleAuth => {
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    process.env.OAUTH_REDIRECT_URL
+  )
   oauth2Client.setCredentials({ ...googleAuth })
   return google.sheets({ version: 'v4', auth: oauth2Client })
 }
@@ -89,14 +101,18 @@ const _handleGoogleError = (error, req, res) => {
 const _getAuthFromHeaders = async (headers, query, userId) => {
   try {
     const key = query ? query.key : null
-    const googleToken = headers['google-token'] ? JSON.parse(headers['google-token']) : null
+    const googleToken = headers['google-token']
+      ? JSON.parse(headers['google-token'])
+      : null
     const metalKey = headers['metal-key'] || null
-    if (googleToken) { // no need to look up the token, just use the one provided
+    if (googleToken) {
+      // no need to look up the token, just use the one provided
       return googleToken
-    } else if (metalKey || key) { // API is being called externally, they should be passing a 'metal-key'
+    } else if (metalKey || key) {
+      // API is being called externally, they should be passing a 'metal-key'
       let apiKey = metalKey || key
-      let user = await Database.getUserForKey(apiKey, userId) || null
-      return (user && user['oauth_token']) ? user['oauth_token'] : null
+      let user = (await Database.getUserForKey(apiKey, userId)) || null
+      return user && user['oauth_token'] ? user['oauth_token'] : null
     } else {
       console.log('no auth')
       return null
@@ -108,16 +124,16 @@ const _getAuthFromHeaders = async (headers, query, userId) => {
   }
 }
 
-const _valuesToJson = (arrayValues) => {
+const _valuesToJson = arrayValues => {
   let headers = arrayValues[0]
   let values = arrayValues.slice(1)
-  return values
-    .map((val) => { // turn the array into an object, @todo: switch to `reduce`
-      let o = {}
-      for (var i = 0; i < headers.length; i++) {
-        let header = headers[i]
-        o[`${header}`] = val[i]
-      }
-      return o
-    })
+  return values.map(val => {
+    // turn the array into an object, @todo: switch to `reduce`
+    let o = {}
+    for (var i = 0; i < headers.length; i++) {
+      let header = headers[i]
+      o[`${header}`] = val[i]
+    }
+    return o
+  })
 }

@@ -44,26 +44,27 @@ const SCOPES = [
   'https://www.googleapis.com/auth/userinfo.profile', // this comes anyway
   'https://www.googleapis.com/auth/userinfo.email', // not strictly required, but I want to give users an ability to receive updates via email
   'https://www.googleapis.com/auth/spreadsheets', // CRUD
-  'https://www.googleapis.com/auth/drive' // Get a list of sheets (allow the user to "favourite" some), and in the future subscribe to updates
+  'https://www.googleapis.com/auth/drive', // Get a list of sheets (allow the user to "favourite" some), and in the future subscribe to updates
 ]
 
 export default {
   components: { Footer },
-  data () {
+  data() {
     return {
-      isMenuActive: false
+      isMenuActive: false,
     }
   },
   computed: {
     ...mapGetters({
       isLoggedIn: 'isLoggedIn',
       googleClientId: 'googleClientId',
-      oauthRedirectUrl: 'oauthRedirectUrl'
+      oauthRedirectUrl: 'oauthRedirectUrl',
     }),
-    authUrl () {
+    authUrl() {
       let scope = encodeURIComponent(SCOPES.join(' '))
       let redirect = encodeURIComponent(this.oauthRedirectUrl)
-      return `${GOOGLE_OATH_URL}?scope=${scope}` +
+      return (
+        `${GOOGLE_OATH_URL}?scope=${scope}` +
         `&access_type=offline` +
         `&include_granted_scopes=true` +
         `&state=state_parameter_passthrough_value` +
@@ -71,13 +72,14 @@ export default {
         `&response_type=code` +
         `&prompt=consent` +
         `&client_id=${this.googleClientId}`
-    }
+      )
+    },
   },
   methods: {
-    toggleMenu () {
+    toggleMenu() {
       this.isMenuActive = !this.isMenuActive
-    }
-  }
+    },
+  },
 }
 </script>
 

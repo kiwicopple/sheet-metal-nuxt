@@ -18,47 +18,58 @@ const LOGIN_URL = '/api/auth/login'
 
 export default {
   auth: false,
-  asyncData: async function ({ app, params, query, store }) {
+  asyncData: async function({ app, params, query, store }) {
     try {
       let { error, code } = query
-      if (error) throw new Error(error) // no token :( the user probably didn't authorise, or the app isn't set up correctly on Google console
-      else { // Google returned a short-lived token
-        let payload = { // We can use that token to get a "refresh" token
+      if (error) throw new Error(error)
+      // no token :( the user probably didn't authorise, or the app isn't set up correctly on Google console
+      else {
+        // Google returned a short-lived token
+        let payload = {
+          // We can use that token to get a "refresh" token
           code: code,
           client_id: process.env.CLIENT_ID,
           client_secret: process.env.CLIENT_SECRET,
           redirect_uri: process.env.OAUTH_REDIRECT_URL,
-          grant_type: 'authorization_code'
+          grant_type: 'authorization_code',
         }
         let { data: token } = await app.$axios.post(GOOGLE_TOKEN_URL, payload) // request the refresh token
-        let { data: user } = await app.$axios.get(GOOGLE_USER_URL, { headers: { Authorization: `Bearer ${token.access_token}` } }) // also get the user info
-        let mutatedToken = { ...token, expiry_date: ((new Date()).getTime() + (token.expires_in * 1000)) }
+        let { data: user } = await app.$axios.get(GOOGLE_USER_URL, {
+          headers: { Authorization: `Bearer ${token.access_token}` },
+        }) // also get the user info
+        let mutatedToken = {
+          ...token,
+          expiry_date: new Date().getTime() + token.expires_in * 1000,
+        }
         delete mutatedToken.expires_in
-        let { data: jwt } = await app.$axios.post(LOGIN_URL, { token: mutatedToken, user: user }) // save the user and get a JWT
+        let { data: jwt } = await app.$axios.post(LOGIN_URL, {
+          token: mutatedToken,
+          user: user,
+        }) // save the user and get a JWT
         store.commit('setLoggedIn', jwt)
         store.commit('setProfile', user)
         return {
           authError: null,
           token: token,
-          user: user
+          user: user,
         }
       }
     } catch (error) {
       console.error('e', error)
       return {
         authError: 'There was a problem signing in.',
-        user: null
+        user: null,
       }
     }
   },
 
   // Display config
   layout: 'brochure',
-  head () {
+  head() {
     return {
-      title: 'Auth'
+      title: 'Auth',
     }
-  }
+  },
 }
 </script>
 

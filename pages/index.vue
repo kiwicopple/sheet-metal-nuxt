@@ -13,10 +13,9 @@
 export default {
   layout: 'brochure',
   auth: false,
-  async asyncData () {
-    return {
-    }
-  }
+  async asyncData() {
+    return {}
+  },
 }
 </script>
 

@@ -51,11 +51,10 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import TokenCard from '~/components/TokenCard'
-const TABS = [ 'Sheets', 'Account' ]
+const TABS = ['Sheets', 'Account']
 export default {
-  asyncData: async function ({ app }) {
+  asyncData: async function({ app }) {
     try {
-      
       return {
         error: null,
         filter: '',
@@ -63,53 +62,57 @@ export default {
         // user: (authUser) ? authUser : {},
 
         // expose constants
-        TABS: TABS
+        TABS: TABS,
       }
     } catch (error) {
-      console.log('error', JSON.stringify(error, Object.getOwnPropertyNames(error)))
+      console.log(
+        'error',
+        JSON.stringify(error, Object.getOwnPropertyNames(error))
+      )
       return {
-        error: error
+        error: error,
       }
     }
   },
   computed: {
     ...mapGetters({
       profile: 'profile',
-      tokens: 'tokens'
+      tokens: 'tokens',
     }),
-    filteredSheets () {
-      if (this.filter && this.filter.length) return this.sheets.filter(x => (x.id.indexOf(this.filter) >= 0))
+    filteredSheets() {
+      if (this.filter && this.filter.length)
+        return this.sheets.filter(x => x.id.indexOf(this.filter) >= 0)
       else return this.sheets
-    }
+    },
   },
   methods: {
     ...mapActions({
-      createToken: 'createToken'
+      createToken: 'createToken',
     }),
-    copyId () {
+    copyId() {
       this.$refs.userId.focus()
       this.$refs.userId.select()
       try {
-        var successful = document.execCommand('copy');
+        var successful = document.execCommand('copy')
         if (successful) this.$toast.show('Copied!', { duration: 2000 })
         else this.$toast.error('Oops, unable to copy', { duration: 2000 })
       } catch (err) {
         this.$toast.error('Oops, unable to copy', { duration: 2000 })
       }
     },
-    logout () {
+    logout() {
       this.$cookies.set('token', false)
       this.$router.push({ path: '/' })
-    }
+    },
   },
 
   // Display config
   components: { TokenCard },
-  head () {
+  head() {
     return {
-      title: 'Account'
+      title: 'Account',
     }
-  }
+  },
 }
 </script>
 
