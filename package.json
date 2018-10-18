@@ -1,11 +1,12 @@
 {
-  "name": "sheet_metal",
+  "name": "sheet-metal",
   "version": "0.0.1",
-  "description": "Turn your Google Sheets into a APIs",
+  "description": "Turn your Google Sheets into APIs",
   "author": "@kiwicopple",
   "private": true,
   "scripts": {
     "dev": "nuxt",
+    "dev2": "concurrently \"nuxt\" \"nodemon ./api\"",
     "build": "NODE_ENV=prod nuxt build",
     "migrate": "node-pg-migrate",
     "start": "NODE_ENV=prod nuxt start",

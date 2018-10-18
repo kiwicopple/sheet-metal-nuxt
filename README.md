@@ -2,21 +2,27 @@
 
 Turn your Google Sheets into Restful APIs.
 
-## Getting Started
 
-Set env vars in `.env`
+## Developers
+
+#### Getting started
 
 ```bash
-npm install # install dependencies
-mv .env_sample .env # add your own config
-npm run migrate up # run migrations (you'll need to create a Database first, and put the settings in .env)
+### Fork t
+git clone https://github.com/kiwicopple/sheet-metal
+git remote set-url origin git://new.url.here # set your own origin
+git remote add upstream https://github.com/kiwicopple/sheet-metal
+git pull upstream master
 
+### Configure
+npm install # install dependencies
+mv .env_sample .env # add your own config to .env
+npm run migrate up # run database migrations (you'll need to create a Database first, and put the settings in .env)
+
+### Run
 npm run dev # serve with hot reload at localhost:3000
 npm start # build for production and launch server
 ```
-
-
-## Developers
 
 #### Contributions
 
@@ -32,9 +38,12 @@ npm run migrate create table name
 
 ## Deploy
 
+Create a `.env.prod`
+
 #### Run migrations
 
-```bash
+```bash 
+## @TODO: fix - add prod vars
 mv .env .env.dev && mv .env.prod .env && \
 npm run migrate up && \
 mv .env .env.prod && mv .env.dev .env

@@ -28,26 +28,38 @@
 
     <div class="columns is-centered" >
       <div class="column is-8">
-        <h3 class="title is-3">Profile</h3>
-        <div class="box">
-          <p>Name: {{profile.name}}</p>
-          <p>Google ID: {{profile.id}}</p>
+        <div>
+          <h3 class="title is-3">Profile</h3>
+          <p class="subtitle is-size-6">Use your User ID with an API Token to get started.</p>
+          <div class="box">
+            <div class="field has-addons"> 
+              <p class="control">
+                <a class="button is-static">User ID</a>
+              </p>
+              <p class="control is-expanded">
+                <input class="input" ref="userId" :value="profile.id" readonly/>
+              </p>
+              <p class="control">
+                <a class="button is-dark is-outlined" @click="copyId()"><span class="icon is-small"><i class="fas fa-copy"></i></span></a>
+              </p>
+            </div>
+            <p>You're logged in as {{profile.name}}</p>
+          </div>
         </div>
-        <div class="buttons is-right">
-          <a class="button" @click="logout()">Log out</a>
+        <div class="m-t-xxl">
+          <h3 class="title is-3">API Tokens</h3>
+          <p class="subtitle is-size-6">Create a token that you can use with the Metal API</p>
+          <div class="buttons is-right">
+            <a class="button is-success has-shadow power-up" @click="createToken()">Create token</a>
+          </div>
+          <TokenCard :tokenKey="token.key" v-for="token in tokens" :key="token.id" />
         </div>
-        <h3 class="title is-3">API Tokens</h3>
-        <p class="subtitle is-size-6">Create a token that you can use with the Metal API</p>
-        <div class="buttons is-right">
-          <a class="button" @click="createToken()">Create token</a>
+        <div class="m-t-xxl">
+          <h3 class="title is-3">Account</h3>
+          <div class="buttons is-right">
+            <a class="button" @click="logout()">Log out</a>
+          </div>
         </div>
-      <div v-for="token in tokens" :key="token.id" class="box" >
-        <div class=""><strong>Key:</strong> {{token.key}}</div>
-        <div class="buttons is-right">
-          <a class="button is-small">Delete</a>
-          <a class="button is-small">Copy Key</a>
-        </div>
-      </div>
       </div>
     </div>
 
@@ -58,6 +70,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import TokenCard from '~/components/TokenCard'
 const TABS = [ 'Sheets', 'Account' ]
 export default {
   asyncData: async function ({ app }) {
@@ -79,13 +92,6 @@ export default {
       }
     }
   },
-  // this is a hack - need to figure out how to add the cookie in the router so 
-  // that I don't have to do this on every page. 
-  // Probably populate the store wiht 'logged in user'
-  mounted () { 
-    // const token = this.$cookies.get('token')
-    // this.$axios.setToken(token, 'Bearer') // All requests should also include the JWT token
-  },
   computed: {
     ...mapGetters({
       profile: 'profile',
@@ -100,10 +106,17 @@ export default {
     ...mapActions({
       createToken: 'createToken'
     }),
-    // createToken: async function () {
-    //   let { data: token } = await this.$axios.post('/api/auth/tokens')
-    //   console.log('token', token)
-    // },
+    copyId () {
+      this.$refs.userId.focus()
+      this.$refs.userId.select()
+      try {
+        var successful = document.execCommand('copy');
+        if (successful) this.$toast.show('Copied!', { duration: 2000 })
+        else this.$toast.error('Oops, unable to copy', { duration: 2000 })
+      } catch (err) {
+        this.$toast.error('Oops, unable to copy', { duration: 2000 })
+      }
+    },
     logout () {
       this.$cookies.set('token', false)
       this.$router.push({ path: '/' })
@@ -111,6 +124,7 @@ export default {
   },
 
   // Display config
+  components: { TokenCard },
   head () {
     return {
       title: 'Account'

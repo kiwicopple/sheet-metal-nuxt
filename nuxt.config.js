@@ -13,7 +13,9 @@ module.exports = {
       { hid: 'description', name: 'description', content: 'Sheet Metal. Turn your Google Sheets into a Restful API.' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
+      { rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.2.0/css/all.css' },
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Muli' }
     ]
   },
   /*
@@ -53,6 +55,7 @@ module.exports = {
   */
   build: {
     vendor: ['axios'],
+    watch: ['api'],
     /*
     ** Run ESLINT on save
     */

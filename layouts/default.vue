@@ -28,8 +28,7 @@
           </div>
         </div> -->
         <div class="navbar-end">
-          <a class="navbar-item">Documentation</a>
-          <nuxt-link type="a" :to="{ path: '/account' }" class="navbar-item">Account</nuxt-link>
+          <nuxt-link type="a" :to="{ path: '/docs' }" class="navbar-item">Documentation</nuxt-link>
         </div>
       </div>
     </nav>

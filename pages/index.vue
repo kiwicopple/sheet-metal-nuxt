@@ -1,8 +1,9 @@
 <template>
 <div class="Home">
-  <section class="hero is-primary is-bold is-large">
-    <div class="hero-body">
-      <h1 class="title is-1">Sheet Metal</h1>
+  <section class="hero is-primary is-large p-t-xl p-b-xl">
+    <div class="section has-text-centered">
+      <h3 class="title is-3">Turn your Google Sheets into a Restful API</h3>
+      <h1 class="title is-5">with Sheet Metal</h1>
     </div>
   </section>
 </div>

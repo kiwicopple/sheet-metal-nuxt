@@ -1,5 +1,16 @@
 <template>
-  <footer>
-    Visit our website for more documentation : <a href="https://nuxtjs.org" target="_blank">nuxtjs.org</a>
+  <footer class="footer">
+    <div class="columns">
+      <div class="column">
+        Logo
+      </div>
+      <div class="column">
+        Links
+      </div>
+      <div class="column">
+        Subscribe
+      </div>
+    </div>
+    
   </footer>
 </template>

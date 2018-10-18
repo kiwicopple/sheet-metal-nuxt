@@ -17,22 +17,25 @@
           <a class="navbar-item">Documentation</a>
           <div class="navbar-item">
             <div class="buttons" v-if="!isLoggedIn">
-              <a :href="authUrl" class="button is-primary"><strong>Sign up</strong></a>
+              <a :href="authUrl" class="button is-primary has-shadow"><strong>Sign up</strong></a>
               <a :href="authUrl" class="button">Log in</a>
             </div>
             <div class="buttons" v-if="isLoggedIn">
-              <nuxt-link :to="{ path: '/account' }" class="button">Account</nuxt-link>
+              <nuxt-link :to="{ path: '/account' }" class="button is-primary has-shadow">Account</nuxt-link>
             </div>
           </div>
         </div>
       </div>
     </nav>
     <nuxt/>
+
+    <Footer />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import Footer from '~/components/Footer'
 
 const GOOGLE_OATH_URL = 'https://accounts.google.com/o/oauth2/v2/auth'
 const SCOPES = [
@@ -43,6 +46,7 @@ const SCOPES = [
 ]
 
 export default {
+  components: { Footer },
   data () {
     return {
       isMenuActive: false
