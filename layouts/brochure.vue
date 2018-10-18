@@ -1,8 +1,10 @@
 <template>
   <div class="BrochureLayout">
-    <nav class="navbar" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-transparent" >
       <div class="navbar-brand">
-        <nuxt-link :to="{ path: '/' }" class="navbar-item"><strong>Sheet Metal</strong></nuxt-link>
+        <nuxt-link :to="{ path: '/' }" class="navbar-item">
+          SHEET METAL
+        </nuxt-link>
         <a class="navbar-burger burger" @click="toggleMenu()">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>

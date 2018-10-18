@@ -1,56 +1,36 @@
 <template>
 <div class="Account" v-if="!error">
 
-  <div class="container m-t-lg">
+    <div class="hero is-dark is-medium">
+      <div class="hero-body columns is-centered" >
+        <div class="column is-7">
+          <h3 class="title is-3">Welcome {{profile.name}}</h3>
+          <p class="subtitle is-size-6">Use your User ID with an API Token to get started.</p>
 
-    <!-- <div class="columns is-centered  is-multiline" v-if="seletedTab === 'Sheets'">
-      <div class="box column is-8">
-        <div class="field has-addons">
-          <div class="control is-expanded">
-            <input class="input is-fullwidth" type="text" v-model="filter" placeholder="Enter a spreadsheet ID">
+          <div class="field has-addons"> 
+            <p class="control">
+              <a class="button is-static">User ID</a>
+            </p>
+            <p class="control is-expanded">
+              <input class="input" ref="userId" :value="profile.id" readonly/>
+            </p>
+            <p class="control">
+              <a class="button is-primary" @click="copyId()"><span class="icon is-small"><i class="fas fa-copy"></i></span></a>
+            </p>
           </div>
         </div>
       </div>
-      <div v-for="sheet in filteredSheets" :key="sheet.id" class="box column is-8" >
-        {{sheet.id}}
-      </div>
+    </div>
+  <div class="container m-t-lg">
 
-      <div v-if="filter.length > 0 && !filteredSheets.length" class="column is-8 box">
-        <div>
-          {{filter}}
-        </div>
-        <div class="buttons is-right">
-          <a class="button" @click="addSheet(filter)">Add</a>
-        </div>
-      </div>
-
-    </div> -->
 
     <div class="columns is-centered" >
       <div class="column is-8">
-        <div>
-          <h3 class="title is-3">Profile</h3>
-          <p class="subtitle is-size-6">Use your User ID with an API Token to get started.</p>
-          <div class="box">
-            <div class="field has-addons"> 
-              <p class="control">
-                <a class="button is-static">User ID</a>
-              </p>
-              <p class="control is-expanded">
-                <input class="input" ref="userId" :value="profile.id" readonly/>
-              </p>
-              <p class="control">
-                <a class="button is-dark is-outlined" @click="copyId()"><span class="icon is-small"><i class="fas fa-copy"></i></span></a>
-              </p>
-            </div>
-            <p>You're logged in as {{profile.name}}</p>
-          </div>
-        </div>
-        <div class="m-t-xxl">
+        <div class="m-t-lg">
           <h3 class="title is-3">API Tokens</h3>
           <p class="subtitle is-size-6">Create a token that you can use with the Metal API</p>
           <div class="buttons is-right">
-            <a class="button is-success has-shadow power-up" @click="createToken()">Create token</a>
+            <a class="button is-primary has-shadow power-up" @click="createToken()">Create token</a>
           </div>
           <TokenCard :tokenKey="token.key" v-for="token in tokens" :key="token.id" />
         </div>

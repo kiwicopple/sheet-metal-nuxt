@@ -64,7 +64,16 @@ $positions: (
 ///
 /// Gloabals
 ///
-
+.navbar {
+  background: #363636;
+  .navbar-item {
+    background: #363636;
+    color: #fff;
+    &:hover {
+      background: #363636;
+    }
+  }
+}
 .button {
   text-transform: uppercase;
   font-weight: 600;

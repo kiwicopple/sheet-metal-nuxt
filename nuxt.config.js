@@ -34,7 +34,10 @@ module.exports = {
     ['@nuxtjs/axios', {
       baseURL: process.env.API_URL || 'http://localhost:3000',
     }],
-    '@nuxtjs/toast',
+    ['@nuxtjs/toast', {
+      duration: 3000,
+      position: 'bottom-right'
+    }],
     'cookie-universal-nuxt'
   ],
   /*
