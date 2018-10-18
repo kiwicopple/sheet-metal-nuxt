@@ -16,7 +16,7 @@
 
         <div class="navbar-end">
           <!-- <a class="navbar-item">Pricing</a> -->
-          <a class="navbar-item">Documentation</a>
+          <a class="navbar-item" href="https://github.com/kiwicopple/sheet-metal/wiki">Documentation</a>
           <div class="navbar-item">
             <div class="buttons" v-if="!isLoggedIn">
               <a :href="authUrl" class="button is-primary has-shadow"><strong>Sign up</strong></a>

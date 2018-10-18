@@ -28,7 +28,7 @@
           </div>
         </div> -->
         <div class="navbar-end">
-          <nuxt-link type="a" :to="{ path: '/docs' }" class="navbar-item">Documentation</nuxt-link>
+          <a class="navbar-item" href="https://github.com/kiwicopple/sheet-metal/wiki">Documentation</a>
         </div>
       </div>
     </nav>

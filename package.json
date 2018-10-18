@@ -5,13 +5,12 @@
   "author": "@kiwicopple",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
-    "dev2": "concurrently \"nuxt\" \"nodemon ./api\"",
+    "dev": "concurrently \"nuxt\" \"nodemon ./api\"",
     "build": "NODE_ENV=prod nuxt build",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "migrate": "node-pg-migrate",
     "start": "NODE_ENV=prod nuxt start",
-    "precommit": "npm run lint",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
+    "precommit": "npm run lint"
   },
   "dependencies": {
     "@nuxtjs/auth": "^4.5.2",
