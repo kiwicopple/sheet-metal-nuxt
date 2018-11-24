@@ -1,10 +1,11 @@
 {
   "name": "sheet-metal",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Turn your Google Sheets into APIs",
   "author": "@kiwicopple",
   "private": true,
   "scripts": {
+    "dev2": "nuxt",
     "dev": "concurrently \"nuxt\" \"nodemon ./api\"",
     "build": "NODE_ENV=prod nuxt build",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
@@ -31,6 +32,7 @@
     "nuxt": "latest",
     "pg": "^7.5.0",
     "source-map-support": "^0.4.15",
+    "vue-no-ssr": "^1.1.0",
     "winston": "^3.1.0"
   },
   "devDependencies": {
